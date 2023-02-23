@@ -1,9 +1,5 @@
 # Flask-first-project
 
-## Install Flask
-```
-pip install Flask
-```
 ## Install venv
 ```
 python3 -m venv venv
@@ -11,6 +7,10 @@ python3 -m venv venv
 ## Acrivate venv
 ```
 source venv/bin/activate
+```
+## Install Flask
+```
+pip install Flask
 ```
 ## Start the project
 ```
