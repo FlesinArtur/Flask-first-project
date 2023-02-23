@@ -12,6 +12,18 @@ python3 -m venv venv
 ```
 source venv/bin/activate
 ```
+## Start the project
+```
+flask --app main run
+```
+## Start the project with debug
+```
+flask --app main run --debug
+```
+## Open project
+```
+http://127.0.0.1:5000
+```
 ## Status codes
 An HTTP status code is a message a website 's server sends to the browser to indicate whether or not that request can be fulfilled. 
 ### Status codes:
