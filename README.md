@@ -48,6 +48,12 @@ An HTTP status code is a message a website 's server sends to the browser to ind
 -	TRACE - Performs a message loop back test along with the path to the target resource.
 
 ## HTTP vs HTTPS
+What Is HTTP?
+- Hypertext Transfer Protocol (HTTP) transfers data from a web server to your browser so that it can access and load websites. 
+
+What Is HTTPS?
+ - HTTPS is the acronym for Hypertext Transfer Protocol Secure. Like HTTP, its main purpose is to transfer data from a server to your browser, so you can load websites. 
+However, HTTPS uses an encrypted connection to communicate between the server and the browser. A SSL (secure sockets layer) certificate protects the transferred data from being stolen as it’s exchanged. 
 
 ## REST and RESTful
 1. Uniform Interface
