@@ -31,7 +31,8 @@ An HTTP status code is a message a website 's server sends to the browser to ind
 
 
 ## HTTP requests
-**Idempotent** is a funny word that often throws people off track. Idempotence sometimes seems like a confusing concept, at least when judged by the academic definition.
+**Idempotent** is a funny word that often throws people off track. Idempotence sometimes seems like a confusing concept, at least when judged by the academic definition. From the point of view of a RESTful service, an operation (or service call) is idempotent when clients can make the same call repeatedly with the same result, working as a "setter" in the programming language. In other words, creating a large number of identical requests has the same effect as a single request. Note that while idempotent operations produce the same result on the server (side effects), the response itself may not be the same (for example, the state of the resource may change between requests).
+
 -	GET - The GET method is used to retrieve information from the given server using a given URI. Requests using GET should only retrieve data and should have no   other effect on the data.
 
 -	HEAD - Same as GET, but it transfers the status line and the header section only.
