@@ -10,7 +10,7 @@ source venv/bin/activate
 ```
 ## Install Flask
 ```
-pip install Flask
+pip install requirements
 ```
 ## Start the project
 ```
