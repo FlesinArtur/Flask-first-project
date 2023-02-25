@@ -56,7 +56,7 @@ What Is HTTPS?
 However, HTTPS uses an encrypted connection to communicate between the server and the browser. A SSL (secure sockets layer) certificate protects the transferred data from being stolen as it’s exchanged. 
 
 ## REST and RESTful
-1. Uniform Interface
+### **1. Uniform Interface**
 By applying the principle of generality to the components interface, we can simplify the overall system architecture and improve the visibility of interactions.
 
 Multiple architectural constraints help in obtaining a uniform interface and guiding the behavior of components.
@@ -71,31 +71,31 @@ The following four constraints can achieve a uniform REST interface:
 
 - Hypermedia as the engine of application state – The client should have only the initial URI of the application. The client application should dynamically drive all other resources and interactions with the use of hyperlinks.
 
-2. Client-Server
+### **2. Client-Server**
 The client-server design pattern enforces the separation of concerns, which helps the client and the server components evolve independently.
 
 By separating the user interface concerns (client) from the data storage concerns (server), we improve the portability of the user interface across multiple platforms and improve scalability by simplifying the server components.
 
 While the client and the server evolve, we have to make sure that the interface/contract between the client and the server does not break.
 
-3. Stateless
+### **3. Stateless**
 Statelessness mandates that each request from the client to the server must contain all of the information necessary to understand and complete the request.
 
 The server cannot take advantage of any previously stored context information on the server.
 
 For this reason, the client application must entirely keep the session state.
 
-4. Cacheable
+### **4. Cacheable**
 The cacheable constraint requires that a response should implicitly or explicitly label itself as cacheable or non-cacheable.
 
 If the response is cacheable, the client application gets the right to reuse the response data later for equivalent requests and a specified period.
 
-5. Layered System
+### **5. Layered System**
 The layered system style allows an architecture to be composed of hierarchical layers by constraining component behavior.
 
 For example, in a layered system, each component cannot see beyond the immediate layer they are interacting with.
 
-6. Code on Demand (Optional)
+### **6. Code on Demand (Optional)**
 REST also allows client functionality to extend by downloading and executing code in the form of applets or scripts.
 
 The downloaded code simplifies clients by reducing the number of features required to be pre-implemented. Servers can provide part of features delivered to the client in the form of code, and the client only needs to execute the code.
