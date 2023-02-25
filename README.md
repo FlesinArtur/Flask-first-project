@@ -35,6 +35,8 @@ An HTTP status code is a message a website 's server sends to the browser to ind
 
 -	HEAD - Same as GET, but it transfers the status line and the header section only.
 
+- PATCH - partial change.
+
 -	POST - A POST request is used to send data to the server, for example, customer information, file upload, etc. using HTML forms.
 
 -	PUT - Replaces all the current representations of the target resource with the uploaded content.
