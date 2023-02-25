@@ -14,3 +14,13 @@ def hello():
 @app.route("/info/<int:id>/")
 def info(id):
     return f"info {escape(id)}"
+
+
+@app.route("/api/version/")
+def version():
+    return {'version': '0.1'}
+
+
+@app.route("/chat/")
+def chat():
+    pass
