@@ -8,9 +8,9 @@ python3 -m venv venv
 ```
 source venv/bin/activate
 ```
-## Install Flask
+## Install requirements
 ```
-pip install requirements
+pip install -r requirements.txt
 ```
 ## Start the project
 ```
