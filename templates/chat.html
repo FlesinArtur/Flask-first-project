@@ -10,7 +10,11 @@
             <input class="message" name="message" placeholder="Type your message">
         </p>
         <p>
-            {{ message }}
+            {% if request.form.get('message') == '' %}
+                <script>alert("Write the message!")</script>
+            {% else %}
+                {{ messages }}
+            {% endif %}
         </p>
     </form>
 </body>

@@ -5,19 +5,18 @@ from datetime import datetime
 
 
 app = Flask(__name__)  # create Flask object
-message = []
+MESSAGES = []
+MESSAGE_ID = 0
 
 
-def create_message():
-    user_id = 0
-    created_at = datetime.now().time()
-    text = request.form.get('message')
-    message.append({
-        'id': user_id,
+def create_message(text):
+    message_id = 0
+    created_at = str(datetime.now().strftime("%H:%M"))
+    MESSAGES.append({
+        'id': message_id,
         'created_at': created_at,
         'text': text
     })
-    return message
 
 
 @app.route("/hello")
@@ -25,9 +24,9 @@ def hello():
     return render_template("hello.html")
 
 
-@app.route("/info/<int:id>/")
-def info(id):
-    return f"info {escape(id)}"
+@app.route("/info/<int:my_id>/")
+def info(my_id):
+    return f"info {escape(my_id)}"
 
 
 @app.route("/api/version/")
@@ -37,7 +36,12 @@ def version():
 
 @app.route("/chat/", methods=['GET', 'POST'])
 def chat():
-    if request.form.get('message') == None:
-        return render_template("chat.html", message="None")
-    message = create_message()
-    return render_template("chat.html", message=message)
+    if request.form.get('message') == '' or request.form.get('message') is None:
+        return render_template("chat.html", messages='')
+    text = request.form.get('message')
+    create_message(text)
+    return render_template("chat.html", messages=MESSAGES)
+
+
+if __name__ == '__main__':
+    app.run(debug=True)
