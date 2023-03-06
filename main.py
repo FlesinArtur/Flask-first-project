@@ -10,10 +10,10 @@ MESSAGES = []
 
 def create_message(text):
     message_id = 0
-    if len(MESSAGES) > 0:
-        for i, element in enumerate(MESSAGES):
-            message_id = MESSAGES[i]['id'] + 1
-            i -= 1
+    if len(MESSAGES) == 0:
+        message_id = 1
+    else:
+        message_id = MESSAGES[-1]['id'] + 1
     created_at = str(datetime.now().strftime("%H:%M"))
     MESSAGES.append({
         'id': message_id,
