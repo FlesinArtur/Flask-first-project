@@ -6,11 +6,14 @@ from datetime import datetime
 
 app = Flask(__name__)  # create Flask object
 MESSAGES = []
-MESSAGE_ID = 0
 
 
 def create_message(text):
     message_id = 0
+    if len(MESSAGES) > 0:
+        for i, element in enumerate(MESSAGES):
+            message_id = MESSAGES[i]['id'] + 1
+            i -= 1
     created_at = str(datetime.now().strftime("%H:%M"))
     MESSAGES.append({
         'id': message_id,
@@ -41,7 +44,3 @@ def chat():
     text = request.form.get('message')
     create_message(text)
     return render_template("chat.html", messages=MESSAGES)
-
-
-if __name__ == '__main__':
-    app.run(debug=True)
