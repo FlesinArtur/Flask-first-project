@@ -8,7 +8,9 @@ from flask import render_template
 
 
 app = Flask(__name__)  # create Flask object
+
 DATABASE_NAME = "messages.db"
+
 with sqlite3.connect(DATABASE_NAME) as connection:
     cur = connection.cursor()
     cur.execute("""CREATE TABLE IF NOT EXISTS messages(
@@ -48,7 +50,7 @@ def hello():
 
 @app.route("/info/<int:my_id>/")
 def info(my_id):
-    return f"info {escape(my_id)}"
+    return f"info: {escape(my_id)}"
 
 
 @app.route("/api/version/")
