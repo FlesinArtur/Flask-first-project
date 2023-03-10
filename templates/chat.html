@@ -12,6 +12,7 @@
         <p>
             {% if request.form.get('message') == '' %}
                 <script>alert("Write the message!")</script>
+                {{ messages }}
             {% else %}
                 {{ messages }}
             {% endif %}
