@@ -9,7 +9,7 @@ from flask import render_template
 
 app = Flask(__name__)  # create Flask object
 
-DATABASE_NAME = "messages.db"
+DATABASE_NAME = "my_database.db"
 
 with sqlite3.connect(DATABASE_NAME) as connection:
     cur = connection.cursor()
@@ -17,6 +17,14 @@ with sqlite3.connect(DATABASE_NAME) as connection:
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     created_at TEXT,
     text TEXT
+    )""")
+
+with sqlite3.connect(DATABASE_NAME) as connection:
+    cur = connection.cursor()
+    cur.execute("""CREATE TABLE IF NOT EXISTS users(
+    user_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    username TEXT,
+    password TEXT
     )""")
 
 
@@ -43,6 +51,38 @@ def get_messages(filename: str = DATABASE_NAME) -> list:
     return messages
 
 
+def get_users(filename: str = DATABASE_NAME):
+    with sqlite3.connect(filename) as connection:
+        cur = connection.cursor()
+        table_data = cur.execute("SELECT * FROM users").fetchall()
+        users = {}
+        for user_id, username, password in table_data:
+            users[username] = password
+    return users
+
+
+def login(username: str, password: str):
+    users = get_users()
+    if users.get(f'{username}') == f'{password}':
+        return True
+    else:
+        return False
+
+
+@app.route("/registration/", methods=['GET', 'POST'])
+def registration(filename: str = DATABASE_NAME):
+    username = request.form.get('username')
+    password = request.form.get('password')
+    repeat_password = request.form.get('repeat_password')
+    if password == repeat_password and password is not None:
+        with sqlite3.connect(filename) as connection:
+            cur = connection.cursor()
+            cur.execute('INSERT INTO users (username, password) VALUES (?,?)', (username, password))
+            connection.commit()
+            return render_template('admin.html')
+    return render_template('registration.html')
+
+
 @app.route("/hello")
 def hello():
     return render_template("hello.html")
@@ -66,3 +106,12 @@ def chat():
         text = request.form.get('message')
         create_message(text)
         return render_template("chat.html", messages=get_messages())
+
+
+@app.route("/admin/", methods=['GET', 'POST'])
+def admin():
+    username = request.form.get('username')
+    password = request.form.get('password')
+    if login(username, password):
+        return render_template("admin.html")
+    return render_template('login.html')
