@@ -12,6 +12,10 @@ source venv/bin/activate
 ```
 pip install -r requirements.txt
 ```
+## Start tests
+```
+pytest tests
+```
 ## Start the project
 ```
 flask --app main run
