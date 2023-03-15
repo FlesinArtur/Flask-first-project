@@ -2,14 +2,20 @@ from datetime import datetime
 import sqlite3
 
 import flask
-from flask import Flask, request
+from flask import Flask, request, session, flash, redirect, url_for
+
 from markupsafe import escape
 from flask import render_template
+from werkzeug.security import generate_password_hash, check_password_hash
 
+from secret import SECRET_KEY
 
 app = Flask(__name__)  # create Flask object
-
+app.secret_key = SECRET_KEY
 DATABASE_NAME = "my_database.db"
+USER_LOGIN = False
+
+# DATABASE :
 
 with sqlite3.connect(DATABASE_NAME) as connection:
     cur = connection.cursor()
@@ -51,36 +57,103 @@ def get_messages(filename: str = DATABASE_NAME) -> list:
     return messages
 
 
-def get_users(filename: str = DATABASE_NAME):
+def get_users(filename: str = DATABASE_NAME) -> dict:
     with sqlite3.connect(filename) as connection:
         cur = connection.cursor()
         table_data = cur.execute("SELECT * FROM users").fetchall()
         users = {}
         for user_id, username, password in table_data:
+            users['user_id'] = user_id
             users[username] = password
     return users
 
 
-def login(username: str, password: str):
-    users = get_users()
-    if users.get(f'{username}') == f'{password}':
-        return True
-    else:
-        return False
+def write_user(username: str, password: str, filename: str = DATABASE_NAME):
+    with sqlite3.connect(filename) as connection:
+        cur = connection.cursor()
+        cur.execute("INSERT INTO users (username, password) VALUES (?,?)", (username, password))
+        connection.commit()
+
+
+def create_session(user_id) -> session:
+    session['user_id'] = user_id
+    session.modified = True
+    return session
+
+
+def delete_session() -> None:
+    session.pop('user_id', None)
+    session.modified = True
+
+
+# authorization :
+
+
+@app.before_request
+def check_user_login():
+    try:
+        users = get_users()
+        if users['user_id'] in session:
+            globals()['USER_LOGIN'] = True
+    except KeyError:
+        pass
+
+
+@app.route("/login/", methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        users = get_users()
+        username = request.form.get('username')
+        password = request.form.get('password')
+        if check_password_hash(users[username], password):
+            globals()['USER_LOGIN'] = True
+            create_session(users['user_id'])
+            return redirect(url_for('admin'))
+    return render_template('login.html')
 
 
 @app.route("/registration/", methods=['GET', 'POST'])
-def registration(filename: str = DATABASE_NAME):
-    username = request.form.get('username')
-    password = request.form.get('password')
-    repeat_password = request.form.get('repeat_password')
-    if password == repeat_password and password is not None:
-        with sqlite3.connect(filename) as connection:
-            cur = connection.cursor()
-            cur.execute('INSERT INTO users (username, password) VALUES (?,?)', (username, password))
-            connection.commit()
-            return render_template('admin.html')
+def registration():
+    if request.method == 'POST':
+        username = request.form.get('username')
+        password = request.form.get('password')
+        repeat_password = request.form.get('repeat_password')
+        if password == repeat_password and len(password) > 5 and password is not None:
+            write_user(username, generate_password_hash(password))
+            return redirect(url_for('login'))
+        flash('The form is filled out incorrectly or the password is not secure')
     return render_template('registration.html')
+
+
+@app.route("/admin/", methods=['GET', 'POST'])
+def admin():
+    if globals()['USER_LOGIN']:
+        return render_template("admin.html")
+    return redirect(url_for('login'))
+
+
+@app.route("/logout/", methods=['GET', 'POST'])
+def logout():
+    globals()['USER_LOGIN'] = False
+    session.pop('user_id', None)
+    session.modified = True
+    return render_template('login.html')
+
+
+# Chat :
+
+
+@app.route("/chat/", methods=['GET', 'POST'])
+def chat():
+    if flask.request.method == 'GET':
+        return render_template("chat.html", messages=get_messages())
+    else:
+        text = request.form.get('message')
+        create_message(text)
+        return render_template("chat.html", messages=get_messages())
+
+
+# Other :
 
 
 @app.route("/hello")
@@ -96,22 +169,3 @@ def info(my_id):
 @app.route("/api/version/")
 def version():
     return {'version': '0.1'}
-
-
-@app.route("/chat/", methods=['GET', 'POST'])
-def chat():
-    if flask.request.method == 'GET':
-        return render_template("chat.html", messages=get_messages())
-    else:
-        text = request.form.get('message')
-        create_message(text)
-        return render_template("chat.html", messages=get_messages())
-
-
-@app.route("/admin/", methods=['GET', 'POST'])
-def admin():
-    username = request.form.get('username')
-    password = request.form.get('password')
-    if login(username, password):
-        return render_template("admin.html")
-    return render_template('login.html')

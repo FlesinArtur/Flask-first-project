@@ -16,6 +16,14 @@ input[type=text], input[type=password] {
   box-sizing: border-box;
 }
 
+.flash {
+  background-color: #A52A2A;
+  color: white;
+  padding: 14px 20px;
+  margin: 8px 0;
+  border: none;
+}
+
 button {
   background-color: #04AA6D;
   color: white;
@@ -42,6 +50,9 @@ button:hover {
 
 <h2>Registration Form</h2>
 
+{% for message in get_flashed_messages() %}
+<div class="flash" >{{ message }}</div>
+{% endfor %}
 <form action="" method="post">
 
   <div class="container">
@@ -55,7 +66,7 @@ button:hover {
     <input type="password" placeholder="Repeat Password" name="repeat_password" required>
 
     <button type="submit">Login</button>
-    <span class="psw"><a href="/admin/">Login</a></span>
+    <span class="psw"><a href="/admin/">Signup</a></span>
   </div>
 
 </form>
