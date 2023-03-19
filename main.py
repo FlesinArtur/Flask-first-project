@@ -57,14 +57,13 @@ def get_messages(filename: str = DATABASE_NAME) -> list:
     return messages
 
 
-def get_users(filename: str = DATABASE_NAME) -> dict:
+def get_users(filename: str = DATABASE_NAME) -> list:
     with sqlite3.connect(filename) as connection:
         cur = connection.cursor()
         table_data = cur.execute("SELECT * FROM users").fetchall()
-        users = {}
+        users = []
         for user_id, username, password in table_data:
-            users['user_id'] = user_id
-            users[username] = password
+            users.append({username: password, 'user_id': user_id})
     return users
 
 
@@ -81,11 +80,6 @@ def create_session(user_id) -> session:
     return session
 
 
-def delete_session() -> None:
-    session.pop('user_id', None)
-    session.modified = True
-
-
 # authorization :
 
 
@@ -93,8 +87,10 @@ def delete_session() -> None:
 def check_user_login():
     try:
         users = get_users()
-        if users['user_id'] in session:
-            globals()['USER_LOGIN'] = True
+        for user in users:
+            if user['user_id'] in session:
+                globals()['USER_LOGIN'] = True
+                return redirect(url_for('admin'))
     except KeyError:
         pass
 
@@ -105,10 +101,14 @@ def login():
         users = get_users()
         username = request.form.get('username')
         password = request.form.get('password')
-        if check_password_hash(users[username], password):
-            globals()['USER_LOGIN'] = True
-            create_session(users['user_id'])
-            return redirect(url_for('admin'))
+        for user in users:
+            try:
+                if check_password_hash(user[username], password):
+                    globals()['USER_LOGIN'] = True
+                    create_session(user['user_id'])
+                    return redirect(url_for('admin'))
+            except KeyError:
+                continue
     return render_template('login.html')
 
 
@@ -135,9 +135,8 @@ def admin():
 @app.route("/logout/", methods=['GET', 'POST'])
 def logout():
     globals()['USER_LOGIN'] = False
-    session.pop('user_id', None)
-    session.modified = True
-    return render_template('login.html')
+    session.clear()
+    return redirect(url_for('admin'))
 
 
 # Chat :
