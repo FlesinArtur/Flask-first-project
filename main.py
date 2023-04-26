@@ -2,7 +2,7 @@ from datetime import datetime
 import sqlite3
 
 import flask
-from flask import Flask, request, session, flash, redirect, url_for
+from flask import Flask, request, session, flash, redirect, url_for, make_response
 
 from markupsafe import escape
 from flask import render_template
@@ -153,6 +153,19 @@ def chat():
 
 
 # Other :
+
+
+@app.route("/set_cookies/", methods=['GET', 'POST'])
+def set_cookies():
+    response = make_response(render_template("cookies.html"))
+    response.set_cookie('time', str(datetime.now().strftime("%H:%M")))
+    return response
+
+
+@app.route("/get_cookies/", methods=['GET'])
+def get_cookies():
+    cookie = request.cookies
+    return render_template('cookies.html', cookie=cookie)
 
 
 @app.route("/hello")
